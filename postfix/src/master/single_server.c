@@ -436,6 +436,7 @@ NORETURN single_server_main(int argc, char **argv, SINGLE_SERVER_FN service,...)
     int     redo_syslog_init = 0;
     const char *dsn_filter_title;
     const char **dsn_filter_maps;
+    const char *snap;
 
     /*
      * Process environment options as early as we can.
@@ -697,8 +698,13 @@ NORETURN single_server_main(int argc, char **argv, SINGLE_SERVER_FN service,...)
      * external lock file.
      */
     if (stream == 0 && !alone) {
-	lock_path = concatenate(DEF_PID_DIR, "/", transport,
-				".", service_name, (void *) 0);
+        if ((snap = getenv("SNAP_DATA")) == 0) {
+	        lock_path = concatenate(DEF_PID_DIR, "/", transport,
+                    ".", service_name, (void *) 0);
+        } else {
+	        lock_path = concatenate(snap, DEF_PID_DIR, "/", transport,
+                    ".", service_name, (void *) 0);
+        }
 	why = vstring_alloc(1);
 	if ((single_server_lock = safe_open(lock_path, O_CREAT | O_RDWR, 0600,
 				      (struct stat *) 0, -1, -1, why)) == 0)

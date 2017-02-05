@@ -44,6 +44,8 @@
 
 void    set_ugid(uid_t uid, gid_t gid)
 {
+#if ENABLE_SNAP
+#else
     int     saved_errno = errno;
 
     if (geteuid() != 0)
@@ -58,4 +60,5 @@ void    set_ugid(uid_t uid, gid_t gid)
     if (msg_verbose > 1)
 	msg_info("setugid: uid %ld gid %ld", (long) uid, (long) gid);
     errno = saved_errno;
+#endif
 }

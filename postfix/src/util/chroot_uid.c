@@ -42,6 +42,8 @@
 
 void    chroot_uid(const char *root_dir, const char *user_name)
 {
+#if ENABLE_SNAP
+#else
     struct passwd *pwd;
     uid_t   uid;
     gid_t   gid;
@@ -85,4 +87,5 @@ void    chroot_uid(const char *root_dir, const char *user_name)
 	msg_info("chroot %s user %s",
 		 root_dir ? root_dir : "(none)",
 		 user_name ? user_name : "(none)");
+#endif
 }

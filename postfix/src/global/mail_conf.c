@@ -125,13 +125,18 @@ void mail_conf_checkdir(const char *config_dir)
     char   *value;
     char   *cp;
     int     found = 0;
+    const char *snap;
 
     /*
      * If running set-[ug]id, require that a non-default configuration
      * directory name is blessed as a bona fide configuration directory in
      * the default main.cf file.
      */
-    path = concatenate(DEF_CONFIG_DIR, "/", "main.cf", (char *) 0);
+    if ((snap = getenv("SNAP")) == 0) {
+        path = concatenate(DEF_CONFIG_DIR, "/", "main.cf", (char *) 0);
+    } else {
+        path = concatenate(snap, DEF_CONFIG_DIR, "/", "main.cf", (char *) 0);
+    }
     if ((fp = vstream_fopen(path, O_RDONLY, 0)) == 0)
 	msg_fatal("open file %s: %m", path);
 

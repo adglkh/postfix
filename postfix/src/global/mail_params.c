@@ -419,6 +419,8 @@ static const char *check_mydomainname(void)
 
 static void check_default_privs(void)
 {
+#if ENABLE_SNAP
+#else
     struct passwd *pwd;
 
     if ((pwd = getpwnam(var_default_privs)) == 0)
@@ -433,12 +435,15 @@ static void check_default_privs(void)
 	msg_fatal("file %s/%s: parameter %s: user %s has privileged group ID",
 		  var_config_dir, MAIN_CONF_FILE,
 		  VAR_DEFAULT_PRIVS, var_default_privs);
+#endif
 }
 
 /* check_mail_owner - lookup owner user attributes and validate */
 
 static void check_mail_owner(void)
 {
+#if ENABLE_SNAP
+#else
     struct passwd *pwd;
 
     if ((pwd = getpwnam(var_mail_owner)) == 0)
@@ -465,12 +470,15 @@ static void check_mail_owner(void)
 	msg_fatal("file %s/%s: parameter %s: user %s has same user ID as %s",
 		  var_config_dir, MAIN_CONF_FILE,
 		  VAR_MAIL_OWNER, var_mail_owner, pwd->pw_name);
+#endif
 }
 
 /* check_sgid_group - lookup setgid group attributes and validate */
 
 static void check_sgid_group(void)
 {
+#if ENABLE_SNAP
+#else
     struct group *grp;
 
     if ((grp = getgrnam(var_sgid_group)) == 0)
@@ -492,12 +500,15 @@ static void check_sgid_group(void)
 	msg_fatal("file %s/%s: parameter %s: group %s has same group ID as %s",
 		  var_config_dir, MAIN_CONF_FILE,
 		  VAR_SGID_GROUP, var_sgid_group, grp->gr_name);
+#endif
 }
 
 /* check_overlap - disallow UID or GID sharing */
 
 static void check_overlap(void)
 {
+#if ENABLE_SNAP
+#else
     if (strcmp(var_default_privs, var_mail_owner) == 0)
 	msg_fatal("file %s/%s: parameters %s and %s specify the same user %s",
 		  var_config_dir, MAIN_CONF_FILE,
@@ -527,6 +538,7 @@ static void check_overlap(void)
 		  VAR_MAIL_OWNER, VAR_SGID_GROUP,
 		  var_mail_owner, var_sgid_group,
 		  (long) var_sgid_gid);
+#endif
 }
 
 #ifdef MYORIGIN_FROM_FILE

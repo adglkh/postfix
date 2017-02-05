@@ -643,6 +643,12 @@ static int plmysql_query(DICT_MYSQL *dict_mysql,
  */
 static void plmysql_connect_single(DICT_MYSQL *dict_mysql, HOST *host)
 {
+    VSTRING *socket_file_path;
+    if (getenv("SNAP_DATA")) {
+        socket_file_path = vstring_alloc(64);
+        vstring_sprintf(socket_file_path, "%s/mysql/mysql.sock", getenv("SNAP_DATA"));
+    }
+
     if ((host->db = mysql_init(NULL)) == NULL)
 	msg_fatal("dict_mysql: insufficient memory");
     if (dict_mysql->option_file)
@@ -668,7 +674,7 @@ static void plmysql_connect_single(DICT_MYSQL *dict_mysql, HOST *host)
 			   dict_mysql->password,
 			   dict_mysql->dbname,
 			   host->port,
-			   (host->type == TYPEUNIX ? host->name : 0),
+			   (host->type == TYPEUNIX ? vstring_str(socket_file_path): 0),
 			   CLIENT_MULTI_RESULTS)) {
 	if (msg_verbose)
 	    msg_info("dict_mysql: successful connection to host %s",

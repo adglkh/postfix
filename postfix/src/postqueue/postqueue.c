@@ -643,13 +643,16 @@ int     main(int argc, char **argv)
 
     /*
      * This program is designed to be set-gid, which makes it a potential
-     * target for attack. Strip and optionally override the process
-     * environment so that we don't have to trust the C library.
+     * target for attack. If not running as root, strip the environment so we
+     * don't have to trust the C library. If running as root, don't strip the
+     * environment so that showq can receive non-default configuration
+     * directory info when the mail system is down.
      */
-    import_env = mail_parm_split(VAR_IMPORT_ENVIRON, var_import_environ);
-    clean_env(import_env->argv);
-    argv_free(import_env);
-
+    if (geteuid() != 0) {
+	import_env = mail_parm_split(VAR_IMPORT_ENVIRON, var_import_environ);
+	clean_env(import_env->argv);
+	argv_free(import_env);
+    }
     if (chdir(var_queue_dir))
 	msg_fatal_status(EX_UNAVAILABLE, "chdir %s: %m", var_queue_dir);
 

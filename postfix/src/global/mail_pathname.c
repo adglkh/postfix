@@ -40,5 +40,9 @@
 
 char   *mail_pathname(const char *service_class, const char *service_name)
 {
-    return (concatenate(service_class, "/", service_name, (char *) 0));
+    const char* snap;
+    if ((snap = getenv("SNAP_DATA")) == 0) {
+        return (concatenate(service_class, "/", service_name, (char *) 0));
+    }
+    return (concatenate(snap, "/", service_class, "/", service_name, (char *) 0));
 }

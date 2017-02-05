@@ -233,6 +233,15 @@ static void master_exit_event(int unused_event, void *unused_context)
     exit(0);
 }
 
+/* check_setenv - setenv() with extreme prejudice */
+
+static void check_setenv(char *name, char *value)
+{
+#define CLOBBER 1
+    if (setenv(name, value, CLOBBER) < 0)
+        msg_fatal("setenv: %m");
+}
+
 /* usage - show hint and terminate */
 
 static NORETURN usage(const char *me)
@@ -261,6 +270,7 @@ int     main(int argc, char **argv)
     ARGV   *import_env;
     int     wait_flag = 0;
     int     monitor_fd = -1;
+    const char *snap, *path, *ld_path;
 
     /*
      * Fingerprint executables and core dumps.
@@ -434,6 +444,15 @@ int     main(int argc, char **argv)
      * Environment import filter, to enforce consistent behavior whether
      * Postfix is started by hand, or at system boot time.
      */
+
+    path = getenv("PATH");
+    msg_info("path: %s\n", path);
+
+    ld_path = getenv("LD_LIBRARY_PATH");
+    msg_info("ld_library_path: %s\n", ld_path);
+
+    snap = getenv("SNAP_DATA");
+
     import_env = mail_parm_split(VAR_IMPORT_ENVIRON, var_import_environ);
     clean_env(import_env->argv);
     argv_free(import_env);
@@ -444,17 +463,28 @@ int     main(int argc, char **argv)
     if (chdir(var_queue_dir))
 	msg_fatal("chdir %s: %m", var_queue_dir);
 
+    check_setenv("SNAP_DATA", snap);
+    check_setenv("PATH", path);
+    check_setenv("LD_LIBRARY_PATH", ld_path);
+
     /*
      * Lock down the master.pid file. In test mode, no file means that it
      * isn't locked.
      */
-    lock_path = vstring_alloc(10);
+    lock_path = vstring_alloc(32);
     data_lock_path = vstring_alloc(10);
     why = vstring_alloc(10);
 
-    vstring_sprintf(lock_path, "%s/%s.pid", DEF_PID_DIR, var_procname);
-    if (test_lock && access(vstring_str(lock_path), F_OK) < 0)
-	exit(0);
+    if (snap == 0) {
+        vstring_sprintf(lock_path, "%s/%s.pid", DEF_PID_DIR, var_procname);
+    } else {
+        vstring_sprintf(lock_path, "%s/%s/%s.pid", snap, DEF_PID_DIR, var_procname);
+    }
+    msg_info("snap: %s lock_path: %s\n", snap, vstring_str(lock_path));
+
+    if (test_lock && access(vstring_str(lock_path), F_OK) < 0){
+	    exit(0);
+    }
     lock_fp = open_lock(vstring_str(lock_path), O_RDWR | O_CREAT, 0644, why);
     if (test_lock)
 	exit(lock_fp ? 0 : 1);
@@ -497,6 +527,13 @@ int     main(int argc, char **argv)
     if (debug_me)
 	debug_process();
 
+    if (getenv("PATH")) {
+        msg_info("PATH: %s\n", getenv("PATH"));
+    }
+
+    if (getenv("LD_LIBRARY_PATH")) {
+        msg_info("LD_LIBRARY_PATH: %s\n", getenv("LD_LIBRARY_PATH"));
+    }
     /*
      * Finish initialization, last part. We must process configuration files
      * after processing command-line parameters, so that we get consistent

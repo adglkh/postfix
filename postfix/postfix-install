@@ -452,10 +452,11 @@ template files main.cf.proto and master.cf.proto."
 
 # Default settings, just to get started.
 
-: ${install_root=/}
-: ${tempdir=`pwd`}
+: ${install_root=`pwd`/../../install}
+: ${tempdir=`pwd`/../../install/tmp}
 : ${config_directory=`bin/postconf -c conf -h -d config_directory`}
 
+echo "config:  ${config_directory}"
 # Find out the location of installed configuration files.
 
 test -z "$non_interactive" && for name in install_root tempdir config_directory

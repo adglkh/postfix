@@ -122,7 +122,7 @@ printfck: update
 install: update
 	SHLIB_ENV_VAR= SHLIB_ENV_VAL= \
 	$(SHLIB_ENV) shlib_directory=$(SHLIB_DIR_OVERRIDE) $(SHELL) \
-		postfix-install $(POSTFIX_INSTALL_OPTS)
+		postfix-install -non-interactive $(POSTFIX_INSTALL_OPTS)
 
 package: update
 	SHLIB_ENV_VAR= SHLIB_ENV_VAL= \
