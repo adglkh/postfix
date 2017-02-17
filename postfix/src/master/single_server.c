@@ -702,7 +702,7 @@ NORETURN single_server_main(int argc, char **argv, SINGLE_SERVER_FN service,...)
 	        lock_path = concatenate(DEF_PID_DIR, "/", transport,
                     ".", service_name, (void *) 0);
         } else {
-	        lock_path = concatenate(snap, DEF_PID_DIR, "/", transport,
+	        lock_path = concatenate(snap, "/", DEF_PID_DIR, "/", transport,
                     ".", service_name, (void *) 0);
         }
 	why = vstring_alloc(1);
