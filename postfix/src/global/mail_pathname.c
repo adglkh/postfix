@@ -36,13 +36,15 @@
 
 #include "mail_proto.h"
 
+#include <stdlib.h>
+
 /* mail_pathname - map service class and service name to pathname */
 
 char   *mail_pathname(const char *service_class, const char *service_name)
 {
-    const char* snap;
-    if ((snap = getenv("SNAP_DATA")) == 0) {
-        return (concatenate(service_class, "/", service_name, (char *) 0));
+    const char* snap_data = getenv("SNAP_DATA");
+    if (snap_data == 0 || strstr(service_class, snap_data) != NULL) {
+         return (concatenate(service_class, "/", service_name, (char *) 0));
     }
-    return (concatenate(snap, "/", service_class, "/", service_name, (char *) 0));
+    return (concatenate(snap_data, "/", service_class, "/", service_name, (char *) 0));
 }
