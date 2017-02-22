@@ -45,18 +45,19 @@ PANIC="$LOGGER -p panic"
 umask 022
 SHELL=/bin/sh
 
-case $SNAP_ARCH in
-amd64) ARCH="x86_64-linux-gnu" ;;
-armhf) ARCH="arm-linux-gnueabihf" ;;
-arm64) ARCH="aarch64-linux-gnu" ;;
-esac
+test -n $SNAP && {
+    case $SNAP_ARCH in
+    amd64) ARCH="x86_64-linux-gnu" ;;
+    armhf) ARCH="arm-linux-gnueabihf" ;;
+    arm64) ARCH="aarch64-linux-gnu" ;;
+    esac
 
-#environment variable is clean in postfix.c
-#export LD_LIBRARY_PATH in snap world.
-#export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$SNAP/lib
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/lib:$SNAP/usr/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu"
-export LD_LIBRARY_PATH="$SNAP/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
-LD_LIBRARY_PATH=$SNAP_LIBRARY_PATH:$LD_LIBRARY_PATH
+    #environment variable is clean in postfix.c
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/lib:$SNAP/usr/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu"
+    LD_LIBRARY_PATH="$SNAP/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH=$SNAP_LIBRARY_PATH:$LD_LIBRARY_PATH
+}
+
 #
 # Can't do much without these in place.
 #
@@ -317,9 +318,11 @@ check-warn)
 	test -n "$check_shared_files" && 
 	   todo="$command_directory/postqueue $command_directory/postdrop $todo"
 
-	#find $todo \
-	    #-prune ! -group $setgid_group \
-	    #-exec $WARN not owned by group $setgid_group: {} \;
+    test -z "$SNAP" && {
+        find $todo \
+            -prune ! -group $setgid_group \
+            -exec $WARN not owned by group $setgid_group: {} \;
+    }
 
 	test -n "$check_shared_files" &&
 	find $command_directory/postqueue $command_directory/postdrop \
