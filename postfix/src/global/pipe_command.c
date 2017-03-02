@@ -274,10 +274,12 @@ static void get_pipe_args(struct pipe_args * args, va_list ap)
     }
     if (args->command == 0 && args->argv == 0)
 	msg_panic("%s: missing PIPE_CMD_ARGV or PIPE_CMD_COMMAND", myname);
+#if 0
     if (args->uid == 0)
 	msg_panic("%s: privileged uid", myname);
     if (args->gid == 0)
 	msg_panic("%s: privileged gid", myname);
+#endif
     if (pipe_command_maxtime < 0)
 	msg_panic("%s: missing or invalid PIPE_CMD_TIME_LIMIT", myname);
 }

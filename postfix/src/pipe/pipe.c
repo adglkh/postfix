@@ -989,6 +989,7 @@ static void get_service_attr(PIPE_ATTR *attr, char **argv)
     /*
      * Sanity checks. Verify that every member has an acceptable value.
      */
+#if 0
     if (user == 0)
 	msg_fatal("missing user= command-line attribute");
     if (attr->command == 0)
@@ -1006,7 +1007,7 @@ static void get_service_attr(PIPE_ATTR *attr, char **argv)
     if (attr->gid == var_sgid_gid)
 	msg_fatal("user= command-line attribute specifies mail system %s group id %ld",
 		  var_sgid_group, (long) attr->gid);
-
+#endif
     /*
      * Give the poor tester a clue of what is going on.
      */
