@@ -270,7 +270,7 @@ int     main(int argc, char **argv)
     ARGV   *import_env;
     int     wait_flag = 0;
     int     monitor_fd = -1;
-    const char *snap, *path, *ld_path;
+    const char *snap, *snap_data, *path, *ld_path;
 
     /*
      * Fingerprint executables and core dumps.
@@ -451,7 +451,8 @@ int     main(int argc, char **argv)
     ld_path = getenv("LD_LIBRARY_PATH");
     msg_info("ld_library_path: %s\n", ld_path);
 
-    snap = getenv("SNAP_DATA");
+    snap = getenv("SNAP");
+    snap_data = getenv("SNAP_DATA");
 
     import_env = mail_parm_split(VAR_IMPORT_ENVIRON, var_import_environ);
     clean_env(import_env->argv);
@@ -463,7 +464,8 @@ int     main(int argc, char **argv)
     if (chdir(var_queue_dir))
 	msg_fatal("chdir %s: %m", var_queue_dir);
 
-    check_setenv("SNAP_DATA", snap);
+    check_setenv("SNAP", snap);
+    check_setenv("SNAP_DATA", snap_data);
     check_setenv("PATH", path);
     check_setenv("LD_LIBRARY_PATH", ld_path);
 
@@ -475,12 +477,12 @@ int     main(int argc, char **argv)
     data_lock_path = vstring_alloc(10);
     why = vstring_alloc(10);
 
-    if (snap == 0) {
+    if (snap_data == 0) {
         vstring_sprintf(lock_path, "%s/%s.pid", DEF_PID_DIR, var_procname);
     } else {
-        vstring_sprintf(lock_path, "%s/%s/%s.pid", snap, DEF_PID_DIR, var_procname);
+        vstring_sprintf(lock_path, "%s/%s/%s.pid", snap_data, DEF_PID_DIR, var_procname);
     }
-    msg_info("snap: %s lock_path: %s\n", snap, vstring_str(lock_path));
+    msg_info("snap_data: %s lock_path: %s\n", snap_data, vstring_str(lock_path));
 
     if (test_lock && access(vstring_str(lock_path), F_OK) < 0){
 	    exit(0);
