@@ -446,10 +446,8 @@ int     main(int argc, char **argv)
      */
 
     path = getenv("PATH");
-    msg_info("path: %s\n", path);
 
     ld_path = getenv("LD_LIBRARY_PATH");
-    msg_info("ld_library_path: %s\n", ld_path);
 
     snap = getenv("SNAP");
     snap_data = getenv("SNAP_DATA");
@@ -482,7 +480,6 @@ int     main(int argc, char **argv)
     } else {
         vstring_sprintf(lock_path, "%s/%s/%s.pid", snap_data, DEF_PID_DIR, var_procname);
     }
-    msg_info("snap_data: %s lock_path: %s\n", snap_data, vstring_str(lock_path));
 
     if (test_lock && access(vstring_str(lock_path), F_OK) < 0){
 	    exit(0);
@@ -529,13 +526,6 @@ int     main(int argc, char **argv)
     if (debug_me)
 	debug_process();
 
-    if (getenv("PATH")) {
-        msg_info("PATH: %s\n", getenv("PATH"));
-    }
-
-    if (getenv("LD_LIBRARY_PATH")) {
-        msg_info("LD_LIBRARY_PATH: %s\n", getenv("LD_LIBRARY_PATH"));
-    }
     /*
      * Finish initialization, last part. We must process configuration files
      * after processing command-line parameters, so that we get consistent

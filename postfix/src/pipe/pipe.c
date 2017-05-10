@@ -989,7 +989,8 @@ static void get_service_attr(PIPE_ATTR *attr, char **argv)
     /*
      * Sanity checks. Verify that every member has an acceptable value.
      */
-#if 0
+#if ENABLE_SNAP
+#else
     if (user == 0)
 	msg_fatal("missing user= command-line attribute");
     if (attr->command == 0)
