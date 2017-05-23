@@ -49,12 +49,12 @@ test -n $SNAP && {
     case $SNAP_ARCH in
     amd64) ARCH="x86_64-linux-gnu" ;;
     armhf) ARCH="arm-linux-gnueabihf" ;;
-    arm64) ARCH="aarch64-linux-gnu" ;;
+    *)     ARCH="$SNAP_ARCH-linux-gnu";;
     esac
 
     #environment variable is clean in postfix.c
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/lib:$SNAP/usr/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu"
-    LD_LIBRARY_PATH="$SNAP/lib:$SNAP/lib/x86_64-linux-gnu:$SNAP/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/lib:$SNAP/usr/lib:$SNAP/lib/$ARCH:$SNAP/usr/lib/$ARCH"
+    LD_LIBRARY_PATH="$SNAP/lib:$SNAP/lib/$ARCH:$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH"
     export LD_LIBRARY_PATH=$SNAP_LIBRARY_PATH:$LD_LIBRARY_PATH
 }
 
