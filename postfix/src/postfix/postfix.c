@@ -529,6 +529,7 @@ int     main(int argc, char **argv)
 
     const char* snap = getenv("SNAP");
     const char* snap_data = getenv("SNAP_DATA");
+    const char* snap_arch = getenv("SNAP_ARCH");
     /*
      * Environment import filter, to enforce consistent behavior whether this
      * command is started by hand, or at system boot time. This is necessary
@@ -541,6 +542,7 @@ int     main(int argc, char **argv)
 
     check_setenv("SNAP", snap);
     check_setenv("SNAP_DATA", snap_data);
+    check_setenv("SNAP_ARCH", snap_arch);
 
     check_setenv("PATH", ROOT_PATH);		/* sys_defs.h */
     check_setenv(CONF_ENV_PATH, var_config_dir);/* mail_conf.h */

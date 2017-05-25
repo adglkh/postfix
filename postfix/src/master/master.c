@@ -270,7 +270,7 @@ int     main(int argc, char **argv)
     ARGV   *import_env;
     int     wait_flag = 0;
     int     monitor_fd = -1;
-    const char *snap, *snap_data, *path, *ld_path;
+    const char *snap, *snap_data, *snap_arch, *path, *ld_path;
 
     /*
      * Fingerprint executables and core dumps.
@@ -451,6 +451,7 @@ int     main(int argc, char **argv)
 
     snap = getenv("SNAP");
     snap_data = getenv("SNAP_DATA");
+    snap_arch = getenv("SNAP_ARCH");
 
     import_env = mail_parm_split(VAR_IMPORT_ENVIRON, var_import_environ);
     clean_env(import_env->argv);
@@ -464,6 +465,7 @@ int     main(int argc, char **argv)
 
     check_setenv("SNAP", snap);
     check_setenv("SNAP_DATA", snap_data);
+    check_setenv("SNAP_ARCH", snap_arch);
     check_setenv("PATH", path);
     check_setenv("LD_LIBRARY_PATH", ld_path);
 
